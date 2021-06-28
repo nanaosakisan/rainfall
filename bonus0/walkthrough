@@ -1,0 +1,38 @@
+AAAAAAAAAAAAAAAAAAAA -> garde seulement 20 char si longue entrée
+
+- 
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+ - 
+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+-> AAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBB��� BBBBBBBBBBBBBBBBBBBB��� 
+-> charatere bizarre puis segfault "Program received signal SIGSEGV, Segmentation fault.
+0x42424242 in ?? ()"
+
+On a donc un buffer overflow exploitable.
+En dessassemblant le progamme on remarque un strncpy juste avant un return. Le strncpy
+est exploitable car même s'il ne copy que n charateres, si la string qu'on lui donne est
+trop longue, il va copier ces n charateres sans mettre de '\0'. 
+
+On constate que l'overflow possible est trop court, seulement 5 charateres. Ce n'est pas
+suffisant pour mettre un shellcode mais assez pour une adresse vers un shellcode.
+
+On va donc stocker le shellcode dans une variable d'environnement qu'on appelera grace à
+son adresse avec le fichier setegg.c
+
+fichier setegg issu d'ici :
+https://www.m7c1.com/posts/buffer-overflow-0x02-storing-shellcode-in-an-environment-variable
+
+L'exploit consiste a envoyer un premier input de plus de 20 charateres pour que le '\0'
+ne soit pas ecrit et qu'on puisse overflow avec le 2ere input.
+
+Pour le deuxieme input, je mets un padding de 9 car c'est à partir d'ici que l'eip sera
+modifiée, puis l'adresse retournée par ma fonction qui set le shellcode dans les variables
+d'environnement et un peu de NOP.
+
+Il ne reste plus qu'à lancer l'exploit !
+
+Pour lire deux fichiers comme deux stdin différents :
+./bonus0 < <(cat /tmp/test /tmp/bonus0)
+
+Pout lire deux fichiers comme deux stdin différents dans gdb:
+r < <(cat /tmp/input1; sleep .2; cat /tmp/bonus0)

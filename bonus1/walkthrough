@@ -1,0 +1,21 @@
+./bonus1 -> segfault
+./bonus1 AAAA -> aucun retour mais pas de segfault, il doit donc prendre un argument
+
+Pour accéder au shellcode il nous faut remplir deux condition : 
+- le premier argument doit être un nombre <= 9 (premiere comparaison)
+- Il doit aussi être égal a 0x574f4c46 (deuxieme comparaison)
+
+Breakpoint sur le memcpy: la valeur de ecx change en fonction de mon input:
+r 1 -> ecx = 4
+r 2 -> ecx = 8
+r 3 -> ecx = 12
+Notre entrée est multiplié par la taille d'un int (4).
+
+En testant de nombreux nombres négatifs je me suis rendue comptes que je pouvais 
+obtenir un num positif pris en entrée par le memcpy. Je pouvais donc copier dans le 
+buffer le deuxieme argument tout en entrant un nombre négatif en premier argument pour 
+passer la premiere condition !
+
+J'ai cherché le nombre qui me permettrais d'overflow la mémoire jusqu'au placement de
+la comparaison dans la stack et j'y ai mis le nombre attendu :
+./bonus1 -1073741810 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFLOW

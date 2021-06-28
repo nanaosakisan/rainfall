@@ -1,0 +1,5 @@
+./bonus3 -> rien
+./bonus3 AAAA -> saut de ligne
+./bonus3 AAAA BBBB -> rien
+
+Le programme prend un argument

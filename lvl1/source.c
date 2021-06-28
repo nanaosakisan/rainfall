@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void run(void)
+
+{
+  fwrite("Good... Wait what?\n",1,0x13,stdout);
+  system("/bin/sh");
+  return;
+}
+
+void main(void)
+
+{
+  char str[80];
+  
+  gets(str);
+  return;
+}

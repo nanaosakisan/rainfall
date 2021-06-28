@@ -1,0 +1,16 @@
+./level8 -> lancement boucle qui attend une entrée
+
+Après avoir fouillé le code on trouve des mots clés : auth, reset, service
+et login
+
+auth -> fait un malloc
+reset -> free le malloc du auth
+service -> duplique une string (malloc)
+login -> comparaison avec lancement d'un /bin/sh si ok
+
+On constate en faisant plusieurs "service" que la deuxième adresse affichée 
+augmente. Au bout de deux "service" si on lance login le shell est executé !
+
+Que s'est-il passé ? En faisant plusieurs malloc grâce au "service", l'adresse
+à auth+32 n'est plus vide, elle est donc différente de 0 et passe la condition
+pour lancer le shell.
