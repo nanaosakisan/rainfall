@@ -32,19 +32,17 @@ disas p:
    0x0804853e <+106>:ret 
 
 
+Il y a deux fonctions que l'on peut exploiter : gets et printf seulement le printf est
+suivi d'un exit on peut donc pas ecraser sont adresse de retour.
+
+On va donc utiliser le gets pour lancer cette fois ci un shellcode directement car il 
+n'y a pas de fonction caché comme au niveau précédant.
+
 breakpoint before leave in p puis info register -> eax est une valeur de retour qui
 contient notre string, elle a l'adresse 0x804a008 qui est celle qu'on va utiliser
 pour ecraser la prochaine instruction
 
---buffer size = x/24wx $esp
---0xbffff6c0:	0xbffff6dc	0x00000000	0x00000000	0xb7e5ec73
---0xbffff6d0:	0x080482b5	0x00000000	0x00c30000	0x41414141 -> debut de notre string
---0xbffff6e0:	0x41414141	0x41414141	0x41414141	0x41414141 
---0xbffff6f0:	0x41414141	0x41414141	0x41414141	0x41414141
---0xbffff700:	0x41414141	0x41414141	0x41414141	0x41414141
---0xbffff710:	0x41414141	0x41414141	0x41414141	0x00414141
-
---p/d 0xbffff72c - 0xbffff6e0 -> 92 -> taille buffer
+Pour trouver le padding j'ai un peu tatonné en testant différente valeur dans gdb.
 
 On met l´exploit dans tmp et on le run pour obtenir le resultat dans tmp aussi :
 python /tmp/exploit2 > /tmp/test2

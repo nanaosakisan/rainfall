@@ -4,7 +4,7 @@ int v()
 {
     char str[520];
 
-    fgets(str, len, stdin)
+    fgets(str, 512, stdin)
     printf(str)
     if (m == 0x40)
     {

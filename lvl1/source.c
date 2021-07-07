@@ -12,7 +12,7 @@ void run(void)
 void main(void)
 
 {
-  char str[80];
+  char str[76];
   
   gets(str);
   return;

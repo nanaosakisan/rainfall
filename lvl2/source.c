@@ -10,7 +10,7 @@ int p()
     }
     puts(str);
     strdup(str, dest);
-    return
+    return (0);
 }
 
 int main (int ac, char** av) 
@@ -18,5 +18,3 @@ int main (int ac, char** av)
     p();
     return (0);
 }
-
-// a completer

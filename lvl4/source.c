@@ -1,11 +1,12 @@
 int m;
 
-int p(str)
+void p(str)
 {
-    printf(str)
+    printf(str);
+    return;
 }
 
-int n()
+void n()
 {
     char str[520];
 
@@ -15,7 +16,7 @@ int n()
     {
         system("/bin/cat /home/user/level5/.pass")
     }
-    return (0);
+    return;
 }
 
 int main (int ac, char **av)

@@ -3,3 +3,21 @@
 ./bonus3 AAAA BBBB -> rien
 
 Le programme prend un argument
+
+En dessassemblant on voit deux chose intéressantes :
+1. le fichier .pass est ouvert puis lu (le programme a bien les droits pour le lire)
+2. un shell est lancé sous condition
+
+Un puts affiche le deuxieme buffer sauf que le fichier étant lu dans le premier le 
+"curseur de lecture" est deja à la fin et on ne recuperera qu'un saut de ligne -> pas 
+intéressant.
+
+Il nous faut donc satisfaire la condition pour lancer le shell, c'est a dire avoir un 
+buffer égal au parametre numerique passé en argument.
+
+On constate que juste apres le atoi le n ieme charactere du buffer est mis à 0. Ainsi
+si je fait :
+./bonus 1 -> le deuxieme charactere du buffer est mis à 0.
+
+La solution est donc simple mettre le premier charactere du buffer à 0 !
+./bonus ''

