@@ -15,7 +15,7 @@ disas n :
    0x080484ff <+61>:	call   0x80483d0 <exit@plt> -> un exit donc pas de variable globale
                                                         possible à écraser
 
-Cependant un info function nous révèle la présence d´une fonction.
+Cependant un info function nous révèle la présence d´une fonction cachée o.
 
 0x080484a4 <+0>:	push   %ebp
 0x080484a5 <+1>:	mov    %esp,%ebp
@@ -44,6 +44,7 @@ x 0x8049838 : (verification que l´adresse est bonne)
 
 Trouver le début de la stack:
 AAAAAAAA %x %x %x %x %x %x %x %x %x %x : 
+          1     2        3        4 
 AAAAAAAA 200 b7fd1ac0 b7ff37d0 41414141 41414141 20782520 25207825 78252078 20782520 
 25207825 -> debut du buffer à 4
 
@@ -61,7 +62,7 @@ la partie ecriture qui touchera cette fois le 5eme arguments (qui correspond à 
 adresse). On commence avec 30 aussi et on obtient 84c2 qui est plus grand que 0804 que l´on
 veut. On a donc un soucis puisqu´on ne peut qu´augmenter la valeur de nos bits mais qu´on
 cherche une valeur plus petite. Le soucis est reglé facilement si on se souvient que meme
-si seulement deux bits nous interresse on a 4 bits pour ecrire :
+si seulement 4 bits nous interresse on a 8 bits pour ecrire :
 
         84 c2   84 a4
 00 00   08 04
