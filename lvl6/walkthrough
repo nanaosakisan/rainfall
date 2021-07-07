@@ -69,4 +69,4 @@ x $eax
    0x8048454 <n>:	0x83e58955 -> Bingo !
 
 Il y a plus qu´a lancer le script hors gdb pour obtenir le flag :
-./level6 `cat /tmp/test6`
+./level6 `cat /tmp/exploit6`

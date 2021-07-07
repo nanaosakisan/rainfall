@@ -46,4 +46,6 @@ info proc map
 find 0xb7e2c000,0xb7fcf000, "/bin/sh"
 
 Il ne reste plus qu'à construire le payload et lancer le programme avec !
-./bonus2 `cat /tmp/input1` `cat /tmp/bonus2`
+./bonus2 `cat /tmp/input2` `cat /tmp/bonus2`
+
+(ne pas oublier de set la langue a fi : export LANG=fi)

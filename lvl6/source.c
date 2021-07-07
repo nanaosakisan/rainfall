@@ -19,6 +19,6 @@ int main(int ac, char **av)
     f = malloc(4);
     f = &m;
     strcpy(s1, av[1]);
-    f;
+    f();
     return (0);
 }

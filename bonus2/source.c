@@ -22,8 +22,8 @@ int main(in ac, char **av)
 
     if (ac == 3)
     {
-        strncpy(str, av[1], len); //-> 0xbffff6c0
-        strncpy(str2, av[2], len); //-> 0xbffff6e8
+        strncpy(str, av[1], 40); //-> 0xbffff6c0
+        strncpy(str2, av[2], 32); //-> 0xbffff6e8
         lang = getenv("LANG");
 
         if (lang != 0) 

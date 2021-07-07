@@ -9,7 +9,8 @@ service -> duplique une string (malloc)
 login -> comparaison avec lancement d'un /bin/sh si ok
 
 On constate en faisant plusieurs "service" que la deuxième adresse affichée 
-augmente. Au bout de deux "service" si on lance login le shell est executé !
+augmente. Au bout de deux "service" (apres un auth) si on lance login le shell est 
+executé !
 
 Que s'est-il passé ? En faisant plusieurs malloc grâce au "service", l'adresse
 à auth+32 n'est plus vide, elle est donc différente de 0 et passe la condition
