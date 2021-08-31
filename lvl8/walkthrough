@@ -15,3 +15,9 @@ executé !
 Que s'est-il passé ? En faisant plusieurs malloc grâce au "service", l'adresse
 à auth+32 n'est plus vide, elle est donc différente de 0 et passe la condition
 pour lancer le shell.
+
+Commande à executer :
+auth AAAA
+service
+service
+login
