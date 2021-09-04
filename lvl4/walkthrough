@@ -55,4 +55,5 @@ On essaie de mettre 16930116 dans m en premier :
 
 Apres quelque ajustement on va ajouter 16930112 dans m.
 
+Redirection de l'exploit dans l'entree standard:
 cat /tmp/exploit4 - | ./level4

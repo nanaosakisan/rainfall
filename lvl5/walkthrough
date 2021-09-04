@@ -73,6 +73,5 @@ les 4 précedants à 0, on ve veut plus 0x0804 mais 0x10804 !
 
 0x10804 - 0x84c2 = 0x8342 (33 602) => 33 602 + 30 (padding) = 33 632
 
-
-
-
+Redirection dans l'entree standard:
+cat /tmp/test5 - | ./level5

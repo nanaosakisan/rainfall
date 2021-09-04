@@ -18,7 +18,7 @@ classe N {
     }
 
     void setAnnotation(char* s) {
-        len = strlen(c)
+        len = strlen(s)
         memcpy(this->str, s, len);
     }
 }

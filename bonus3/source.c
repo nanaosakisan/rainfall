@@ -17,7 +17,7 @@ int main(int ac, char **av)
     fread(buf2, 1, 65, file);
     fclose(file);
     if (strcmp(buf1, num) == 0)
-        execl("/bin/sh", "sh"); //-> executer ca !
-    puts(buf2);                 //-> ou afficher ca
+        execl("/bin/sh", "sh");
+    puts(buf2);                 
     return (0);
 }
