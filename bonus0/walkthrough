@@ -36,3 +36,5 @@ Pour lire deux fichiers comme deux stdin différents :
 
 Pout lire deux fichiers comme deux stdin différents dans gdb:
 r < <(cat /tmp/input1; sleep .2; cat /tmp/bonus0)
+
+/!\ Pour avoir la bonne addresse d'environnement de l'EGG il faut lancer le a.out en étant placé dans le dossier /tmp les deux fois !
